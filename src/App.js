@@ -4,10 +4,33 @@ import './App.css';
 
 import axios from 'axios';
 
-const FIXER_API = `http://data.fixer.io/api/latest?access_key=${process.env.REACT_APP_FIXER_API_KEY}`;
-const REST_CONTRIES_API = `https://restcountries.eu/rest/v2/currency/cop`;
-
 function App() {
+  // https://fixer.io/
+  const FIXER_API = `http://data.fixer.io/api/latest?access_key=${process.env.REACT_APP_FIXER_API_KEY}`;
+
+  // https://restcountries.eu
+  const REST_CONTRIES_API = `https://restcountries.eu/rest/v2/currency/cop`;
+
+  // Fetch data about currencies
+  const getExchangeRate = async (fromCurrency, toCurrency) => {
+    const {
+      data: { rates },
+    } = await axios.get(FIXER_API);
+
+    const won = 1 / rates[fromCurrency];
+    const exchangeRate = won * rates[toCurrency];
+
+    return exchangeRate;
+
+    console.log(rates);
+    console.log(exchangeRate);
+  };
+  getExchangeRate('USD', 'KRW');
+
+  // Fetch data about countries
+
+  // Output data
+
   return (
     <div className="App">
       <header className="App-header">
