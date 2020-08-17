@@ -9,7 +9,7 @@ function App() {
   const FIXER_API = `http://data.fixer.io/api/latest?access_key=${process.env.REACT_APP_FIXER_API_KEY}`;
 
   // https://restcountries.eu
-  const REST_CONTRIES_API = `https://restcountries.eu/rest/v2/currency/cop`;
+  const REST_CONTRIES_API = `https://restcountries.eu/rest/v2/currency`;
 
   // Fetch data about currencies
   const getExchangeRate = async (fromCurrency, toCurrency) => {
@@ -20,14 +20,24 @@ function App() {
     const won = 1 / rates[fromCurrency];
     const exchangeRate = won * rates[toCurrency];
 
-    return exchangeRate;
-
     console.log(rates);
     console.log(exchangeRate);
+
+    return exchangeRate;
   };
   getExchangeRate('USD', 'KRW');
 
   // Fetch data about countries
+  const getCountries = async (currencyCode) => {
+    const { data } = await axios.get(`${REST_CONTRIES_API}/${currencyCode}`);
+
+    const countryName = data.map((country) => country.name);
+
+    console.log(data);
+    console.log(countryName);
+  };
+
+  getCountries('KRW');
 
   // Output data
 
