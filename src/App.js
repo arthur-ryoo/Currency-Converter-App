@@ -31,13 +31,22 @@ function App() {
   const getCountries = async (currencyCode) => {
     const { data } = await axios.get(`${REST_CONTRIES_API}/${currencyCode}`);
 
-    const countryName = data.map((country) => country.name);
-
-    console.log(data);
-    console.log(countryName);
+    return data.map(({ name }) => name);
   };
 
   getCountries('KRW');
+
+  const convertCurrency = async (fromCurrency, toCurrency, amount) => {
+    fromCurrency = fromCurrency.toUpperCase();
+    toCurrency = fromCurrency.toUpperCase();
+
+    const [exchangeRate, countries] = await Promise.all([
+      getExchangeRate(fromCurrency, toCurrency),
+      getCountries(toCurrency),
+    ]);
+  };
+
+  convertCurrency('AUD', 'USD', 20);
 
   // Output data
 
