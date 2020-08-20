@@ -13,40 +13,54 @@ function App() {
 
   // Fetch data about currencies
   const getExchangeRate = async (fromCurrency, toCurrency) => {
-    const {
-      data: { rates },
-    } = await axios.get(FIXER_API);
+    try {
+      const {
+        data: { rates },
+      } = await axios.get(FIXER_API);
 
-    const won = 1 / rates[fromCurrency];
-    const exchangeRate = won * rates[toCurrency];
+      const won = 1 / rates[fromCurrency];
+      const exchangeRate = won * rates[toCurrency];
 
-    console.log(rates);
-    console.log(exchangeRate);
-
-    return exchangeRate;
+      return exchangeRate;
+    } catch (error) {
+      throw new Error(
+        `Unable to get currency ${fromCurrency} and ${toCurrency}`
+      );
+    }
   };
   getExchangeRate('USD', 'KRW');
 
   // Fetch data about countries
   const getCountries = async (currencyCode) => {
-    const { data } = await axios.get(`${REST_CONTRIES_API}/${currencyCode}`);
+    try {
+      const { data } = await axios.get(`${REST_CONTRIES_API}/${currencyCode}`);
 
-    return data.map(({ name }) => name);
+      return data.map(({ name }) => name);
+    } catch (error) {
+      throw new Error(`Unable to get countries that use ${currencyCode}`);
+    }
   };
 
   getCountries('KRW');
 
   const convertCurrency = async (fromCurrency, toCurrency, amount) => {
     fromCurrency = fromCurrency.toUpperCase();
-    toCurrency = fromCurrency.toUpperCase();
+    toCurrency = toCurrency.toUpperCase();
 
     const [exchangeRate, countries] = await Promise.all([
       getExchangeRate(fromCurrency, toCurrency),
       getCountries(toCurrency),
     ]);
+
+    const convertedAmount = (amount * exchangeRate).toFixed(2);
+
+    return `${amount} ${fromCurrency} is worth ${convertedAmount} ${toCurrency}.
+    You can spend these in the following countries: ${countries}.`;
   };
 
-  convertCurrency('AUD', 'USD', 20);
+  convertCurrency('KRW', 'USD', 20000)
+    .then((result) => console.log(result))
+    .catch((error) => console.log(error));
 
   // Output data
 
